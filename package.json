@@ -11,12 +11,21 @@
     "test": "cd server && npm test",
     "build:client": "cd client && npm run build",
     "build:server": "cd server && npm run build",
-    "install:all": "npm install && cd server && npm install && cd ../client && npm install"
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm install && npm run build"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
   },
-  "keywords": ["ai", "interview", "saas", "fullstack", "react", "express", "mongodb"],
+  "keywords": [
+    "ai",
+    "interview",
+    "saas",
+    "fullstack",
+    "react",
+    "express",
+    "mongodb"
+  ],
   "author": "InterviewAI Team",
   "license": "ISC"
 }
