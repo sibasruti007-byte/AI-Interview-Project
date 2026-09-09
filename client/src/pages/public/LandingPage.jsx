@@ -279,7 +279,7 @@ export const LandingPage = () => {
           </p>
           <div className="mt-8 flex justify-center">
             <Link to="/register">
-              <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-500 shadow-xl text-base font-bold">
+              <Button variant="white" size="lg" className="shadow-xl text-base font-bold">
                 Get Started for Free
               </Button>
             </Link>

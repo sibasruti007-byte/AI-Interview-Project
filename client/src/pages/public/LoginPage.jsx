@@ -38,7 +38,12 @@ export const LoginPage = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      const errorMessage =
+        err.response?.data?.message ||
+        (err.code === 'ERR_NETWORK' || !err.response
+          ? 'Unable to connect to server. Please ensure the backend server is running.'
+          : 'Login failed. Please check your credentials.');
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

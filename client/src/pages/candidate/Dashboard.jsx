@@ -107,7 +107,7 @@ export const Dashboard = () => {
 
           <div className="flex items-center gap-3">
             <Link to="/interviews/create">
-              <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100 shadow-lg font-bold">
+              <Button variant="white" size="lg" className="shadow-lg font-bold">
                 <PlusCircle className="w-5 h-5 mr-2" /> Start Interview
               </Button>
             </Link>

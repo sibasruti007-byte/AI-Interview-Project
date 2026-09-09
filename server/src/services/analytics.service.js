@@ -40,7 +40,7 @@ class AnalyticsService {
       {
         $group: {
           _id: '$questionCategory',
-          avgScore: { $mean: '$evaluation.score' },
+          avgScore: { $avg: '$evaluation.score' },
           totalQuestions: { $sum: 1 }
         }
       },
@@ -88,7 +88,7 @@ class AnalyticsService {
     // Average score aggregation
     const avgScoreAgg = await Interview.aggregate([
       { $match: { status: 'completed' } },
-      { $group: { _id: null, avgScore: { $mean: '$scores.overall' } } }
+      { $group: { _id: null, avgScore: { $avg: '$scores.overall' } } }
     ]);
     const averagePlatformScore = avgScoreAgg[0] ? Math.round(avgScoreAgg[0].avgScore) : 74;
 

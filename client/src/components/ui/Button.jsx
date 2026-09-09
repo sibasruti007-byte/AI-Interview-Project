@@ -18,7 +18,8 @@ export const Button = ({
     secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 focus:ring-slate-500 dark:bg-slate-800 dark:hover:bg-slate-700',
     outline: 'bg-transparent border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 focus:ring-brand-500',
     ghost: 'bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 focus:ring-slate-500',
-    danger: 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/20 focus:ring-red-500 border border-transparent'
+    danger: 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/20 focus:ring-red-500 border border-transparent',
+    white: 'bg-white hover:bg-slate-100 text-slate-900 shadow-lg border border-transparent focus:ring-slate-300 dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900'
   };
 
   const sizes = {

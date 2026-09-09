@@ -44,7 +44,12 @@ export const RegisterPage = () => {
       await registerAuth(data.name, data.email, data.password, data.confirmPassword);
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
+      const errorMessage =
+        err.response?.data?.message ||
+        (err.code === 'ERR_NETWORK' || !err.response
+          ? 'Unable to connect to server. Please ensure the backend server is running.'
+          : 'Registration failed. Please try again.');
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
