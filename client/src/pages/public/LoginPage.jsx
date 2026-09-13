@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Sparkles, Mail, Lock, ArrowRight, ShieldCheck, UserCheck } from 'lucide-react';
+import { Sparkles, Mail, Lock, ArrowRight, ShieldCheck, UserCheck, Zap } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -15,7 +15,7 @@ const loginSchema = z.object({
 });
 
 export const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, loginWithMock } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -38,11 +38,19 @@ export const LoginPage = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message ||
-        (err.code === 'ERR_NETWORK' || !err.response
-          ? 'Unable to connect to server. Please ensure the backend server is running.'
-          : 'Login failed. Please check your credentials.');
+      const status = err.response?.status;
+      let errorMessage = 'Login failed. Please check your credentials.';
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (status === 401) {
+        errorMessage = 'Invalid email or password. Please check your credentials.';
+      } else if (status === 403) {
+        errorMessage = 'Your account has been deactivated. Please contact support.';
+      } else if (err.code === 'ERR_NETWORK' || status === 502 || status === 504 || !err.response) {
+        errorMessage = 'Unable to reach backend server (port 5000). Use Dev Bypass or run "npm run dev".';
+      }
+
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -56,6 +64,34 @@ export const LoginPage = () => {
     } else {
       setValue('email', 'candidate@interviewai.com');
       setValue('password', 'CandidatePass123!');
+    }
+    toast.success(`Filled ${role} credentials`);
+  };
+
+  const handleInstantLogin = async (role) => {
+    setLoading(true);
+    const email = role === 'admin' ? 'admin@interviewai.com' : 'candidate@interviewai.com';
+    const password = role === 'admin' ? 'AdminPass123!' : 'CandidatePass123!';
+    setValue('email', email);
+    setValue('password', password);
+
+    try {
+      const user = await login(email, password);
+      if (user?.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      // If network/proxy failed, fall back to mock session directly
+      const mockUser = loginWithMock(role);
+      if (mockUser?.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -125,27 +161,41 @@ export const LoginPage = () => {
             </Button>
           </form>
 
-          {/* Quick Fill Buttons for Demo / Testing */}
+          {/* Quick Demo & Dev Bypass Buttons */}
           <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800">
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider text-center mb-3">
-              One-Click Demo Credentials
-            </p>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                Instant Demo Logins
+              </span>
+              <span className="text-[10px] text-brand-500 font-medium flex items-center gap-1">
+                <Zap className="w-3 h-3" /> 1-Click Login
+              </span>
+            </div>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={() => handleQuickFill('candidate')}
-                className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+                onClick={() => handleInstantLogin('candidate')}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-medium rounded-xl border border-brand-200 dark:border-brand-900/50 bg-brand-50/50 dark:bg-brand-950/30 hover:bg-brand-100 dark:hover:bg-brand-900/40 text-brand-700 dark:text-brand-300 transition-colors shadow-sm"
               >
                 <UserCheck className="w-3.5 h-3.5 text-brand-500" />
                 Demo Candidate
               </button>
               <button
                 type="button"
-                onClick={() => handleQuickFill('admin')}
-                className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors"
+                onClick={() => handleInstantLogin('admin')}
+                className="flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-medium rounded-xl border border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/30 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-700 dark:text-amber-300 transition-colors shadow-sm"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
                 Demo Admin
+              </button>
+            </div>
+            <div className="mt-2 text-center">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('candidate')}
+                className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors underline"
+              >
+                Or fill form fields only
               </button>
             </div>
           </div>
